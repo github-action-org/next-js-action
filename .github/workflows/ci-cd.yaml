@@ -9,9 +9,9 @@ on:
     types:
       - closed
 
-env:
-  APP_ENV: next-js-action
-  ECR_NAME: my-backend-test
+# env:
+#   APP_ENV: next-js-action
+#   ECR_NAME: my-backend-test
 
 jobs:
   build-and-deploy-nextjs:
@@ -44,14 +44,14 @@ jobs:
     - name: Compress folder
       run: zip -r next.zip .next
 
-    - name: Zipfile Upload to S3
-      uses: jakejarvis/s3-sync-action@v0.4.0
-      with:
-        aws-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
-        src: next.zip
-        dest: ${{ secrets.AWS_S3_BUCKET }}
+    # - name: Zipfile Upload to S3
+    #   uses: jakejarvis/s3-sync-action@v0.4.0
+    #   with:
+    #     aws-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     aws-secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     aws-region: us-west-2
+    #     src: next.zip
+    #     dest: ${{ secrets.AWS_S3_BUCKET }}
 
     - name: Upload to S3
       run: |
