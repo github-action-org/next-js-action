@@ -47,7 +47,6 @@ jobs:
 
     - name: Upload to S3
       run: |
-        aws s3 cp next.zip ${{ secrets.AWS_S3_BUCKET }} --recursive
         aws s3 cp .next ${{ secrets.AWS_S3_BUCKET }} --recursive
 
     # - name: Deploy to AWS CodeDeploy
