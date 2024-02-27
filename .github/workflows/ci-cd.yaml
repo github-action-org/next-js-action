@@ -36,12 +36,12 @@ jobs:
         aws configure set region ${{ secrets.AWS_REGION }}
 
     - name: Compress folder
-      run: zip -r ./.next.zip ./.next
+      run: zip -r next.zip .next
       
     - name: Upload to S3
       run: |
-        aws s3 cp ./.next.zip s3://github-action-org-jh/next-js-action/ --recursive
-        aws s3 cp ./.next s3://github-action-org-jh/next-js-action/ --recursive
+        aws s3 cp next.zip s3://github-action-org-jh/next-js-action/ --recursive
+        aws s3 cp .next s3://github-action-org-jh/next-js-action/ --recursive
 
     # - name: Deploy to AWS CodeDeploy
     #   run: aws deploy create-deployment --application-name YourApplication --deployment-group-name YourDeploymentGroup --s3-location bucket=your-bucket,key=nextjs-build-folder,bundleType=zip
