@@ -9,6 +9,10 @@ on:
     types:
       - closed
 
+env:
+  APP_ENV: next-js-action
+  ECR_NAME: my-backend-test
+
 jobs:
   build-and-deploy-nextjs:
     name: build
