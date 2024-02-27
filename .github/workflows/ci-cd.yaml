@@ -53,6 +53,10 @@ jobs:
     #     src: next.zip
     #     dest: ${{ secrets.AWS_S3_BUCKET }}
 
+    - name: Zipfile Upload to S3
+      run: |
+        aws s3 cp next.zip ${{ secrets.AWS_S3_BUCKET }} --recursive
+        
     - name: Upload to S3
       run: |
         aws s3 cp .next ${{ secrets.AWS_S3_BUCKET }} --recursive
