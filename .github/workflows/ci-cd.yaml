@@ -11,6 +11,8 @@ on:
 
 jobs:
   build-and-deploy-nextjs:
+    name: build
+    environment: main 
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
 
