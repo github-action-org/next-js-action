@@ -29,14 +29,14 @@ jobs:
     - name: Build Next.js app
       run: npm run build
 
-    # - name: Configure AWS credentials
-    #   run: |
-    #     aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     aws configure set region ${{ secrets.AWS_REGION }}
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
 
-    # - name: Upload to S3
-    #   run: aws s3 cp ./path/to/nextjs-build-folder s3://your-bucket/ --recursive
+    - name: Upload to S3
+      run: aws s3 cp .next s3://github-action-org-jh/next-js-action/ --recursive
 
     # - name: Deploy to AWS CodeDeploy
     #   run: aws deploy create-deployment --application-name YourApplication --deployment-group-name YourDeploymentGroup --s3-location bucket=your-bucket,key=nextjs-build-folder,bundleType=zip
