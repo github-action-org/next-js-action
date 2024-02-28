@@ -46,7 +46,7 @@ jobs:
         zip -r next.zip .next
 
   deploy:
-    needs: build
+    needs: build-and-deploy-nextjs
     runs-on: ubuntu-latest
 
     steps:
