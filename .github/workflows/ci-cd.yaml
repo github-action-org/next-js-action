@@ -36,8 +36,8 @@ jobs:
       run: npm run build
 
 
-    - name: Compress .next Folder
-      run: zip -r next-app.zip .next
+    # - name: Compress .next Folder
+    #   run: zip -r next-app.zip .next
 
 
     - name: Configure AWS credentials
