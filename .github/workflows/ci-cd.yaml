@@ -42,7 +42,7 @@ jobs:
         aws configure set region ${{ secrets.AWS_REGION }}
 
     - name: Compress folder
-      run: zip -r next.zip .next
+      run: zip -r next.zip ./next
 
     # - name: Zipfile Upload to S3
     #   uses: jakejarvis/s3-sync-action@v0.4.0
@@ -53,13 +53,17 @@ jobs:
     #     src: next.zip
     #     dest: ${{ secrets.AWS_S3_BUCKET }}
 
-    - name: Zipfile Upload to S3
-      run: |
-        aws s3 cp next.zip ${{ secrets.AWS_S3_BUCKET }} --recursive
-        
     - name: Upload to S3
-      run: |
-        aws s3 cp .next ${{ secrets.AWS_S3_BUCKET }} --recursive
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete --exclude '.git/*' --exclude '.github/*' build.zip s3://your-bucket-name
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    # - name: Upload to S3
+    #   run: |
+    #     aws s3 cp .next ${{ secrets.AWS_S3_BUCKET }} --recursive
 
     # - name: Deploy to AWS CodeDeploy
     #   run: aws deploy create-deployment --application-name YourApplication --deployment-group-name YourDeploymentGroup --s3-location bucket=your-bucket,key=nextjs-build-folder,bundleType=zip
