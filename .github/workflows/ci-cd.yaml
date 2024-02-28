@@ -41,9 +41,8 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set region ${{ secrets.AWS_REGION }}
 
-    - name: Compress folder
-      run: |
-        zip -r $GITHUB_WORKSPACE/next.zip .next
+    - name: Zip .next folder
+      run: zip -r $GITHUB_WORKSPACE/next.zip .next
 
   deploy:
     needs: build-and-deploy-nextjs
