@@ -43,7 +43,7 @@ jobs:
 
     - name: Compress folder
       run: |
-        zip -r next.zip .next
+        zip -r $GITHUB_WORKSPACE/next.zip .next
 
   deploy:
     needs: build-and-deploy-nextjs
@@ -59,7 +59,7 @@ jobs:
         AWS_S3_BUCKET: github-action-org-jh
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SOURCE_DIR: .
+        SOURCE_DIR: $GITHUB_WORKSPACE
         DEST_DIR: next-js-action
       if: success()
     # - name: Upload to S3
