@@ -35,62 +35,29 @@ jobs:
     - name: Build Next.js app
       run: npm run build
 
+
+    - name: Compress .next Folder
+      run: zip -r next-app.zip .next
+
+
     - name: Configure AWS credentials
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set region ${{ secrets.AWS_REGION }}
 
-    - name: Zip .next folder
-      run: |
-        ls -R $GITHUB_WORKSPACE # List contents before zipping
-        zip -r $GITHUB_WORKSPACE/next.zip .next
-        ls -R $GITHUB_WORKSPACE # List contents after zipping
-
-  deploy:
-    needs: build-and-deploy-nextjs
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - name: Download Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: next-zip-artifact
-
-    - name: Check Zip File
-      run: |
-        ls -l $GITHUB_WORKSPACE/next.zip
-        unzip -l $GITHUB_WORKSPACE/next.zip
-
 
     - name: Upload to S3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete
-      env:
-        #AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_S3_BUCKET: github-action-org-jh
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SOURCE_DIR: $GITHUB_WORKSPACE/next.zip
-        DEST_DIR: next-js-action
-      if: success()
-    # - name: Upload to S3
-    #   run: aws s3 cp next.zip ${{ secrets.AWS_S3_BUCKET }} --recursive
-  
+      run: |
+        aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
+        aws s3 cp next-app.zip s3://github-action-org-jh/next-js-action/next-app.zip
 
+  # deploy:
+  #   needs: build-and-deploy-nextjs
+  #   runs-on: ubuntu-latest
 
-
-    # - name: Zipfile Upload to S3
-    #   uses: jakejarvis/s3-sync-action@v0.4.0
-    #   with:
-    #     aws-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     aws-secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     aws-region: us-west-2
-    #     src: next.zip
-    #     dest: ${{ secrets.AWS_S3_BUCKET }}
-    #   if: success()  
-
-    # - name: Deploy to AWS CodeDeploy
-    #   run: aws deploy create-deployment --application-name YourApplication --deployment-group-name YourDeploymentGroup --s3-location bucket=your-bucket,key=nextjs-build-folder,bundleType=zip
+  #   steps:
+  #   - name: Upload to S3
+  #     run: |
+  #       aws s3 cp .next s3://your-s3-bucket/your-s3-path/.next --recursive
+  #       aws s3 cp next-app.zip s3://your-s3-bucket/your-s3-path/next-app.zip
