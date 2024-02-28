@@ -36,8 +36,8 @@ jobs:
       run: npm run build
 
 
-    # - name: Compress .next Folder
-    #   run: zip -r next-app.zip .next
+    - name: Compress .next Folder
+      run: zip -r next-app.zip .next
 
 
     - name: Configure AWS credentials
@@ -52,7 +52,7 @@ jobs:
         mkdir deploy
         cp ./appspec-yml/appspec.yml ./deploy
         cp ./appspec-yml/deploy.sh ./deploy
-        cp ./next ./deploy
+        cp .next ./deploy
         zip -r next-app.zip ./deploy
 
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
