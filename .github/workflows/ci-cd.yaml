@@ -42,13 +42,27 @@ jobs:
         aws configure set region ${{ secrets.AWS_REGION }}
 
     - name: Zip .next folder
-      run: zip -r $GITHUB_WORKSPACE/next.zip .next
+      run: |
+        ls -R $GITHUB_WORKSPACE # List contents before zipping
+        zip -r $GITHUB_WORKSPACE/next.zip .next
+        ls -R $GITHUB_WORKSPACE # List contents after zipping
 
   deploy:
     needs: build-and-deploy-nextjs
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check Zip File
+      run: |
+        ls -l $GITHUB_WORKSPACE/next.zip
+        unzip -l $GITHUB_WORKSPACE/next.zip
+
+
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: next-zip-artifact
+        
     - name: Upload to S3
       uses: jakejarvis/s3-sync-action@master
       with:
