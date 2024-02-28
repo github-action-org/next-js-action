@@ -36,8 +36,8 @@ jobs:
       run: npm run build
 
 
-    - name: Compress .next Folder
-      run: zip -r next-app.zip .next
+    # - name: Compress .next Folder
+    #   run: zip -r next-app.zip .next
 
 
     - name: Configure AWS credentials
@@ -47,17 +47,25 @@ jobs:
         aws configure set region ${{ secrets.AWS_REGION }}
 
 
-    - name: Upload to S3
+    - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
       run: |
-        aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
-        aws s3 cp next-app.zip s3://github-action-org-jh/next-js-action/next-app.zip
+        mkdir deploy
+        cp ./appspec-yml/appspec.yml ./deploy
+        cp ./appspec-yml/deploy.sh ./deploy
+        cp ./next ./deploy
+        zip -r next-app.zip ./deploy
 
-  # deploy:
-  #   needs: build-and-deploy-nextjs
-  #   runs-on: ubuntu-latest
+    - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
+      run: |        
+        aws s3 cp next-app.zip s3://github-action-org-jh/next-js-action/next-app.zip 
 
-  #   steps:
-  #   - name: Upload to S3
-  #     run: |
-  #       aws s3 cp .next s3://your-s3-bucket/your-s3-path/.next --recursive
-  #       aws s3 cp next-app.zip s3://your-s3-bucket/your-s3-path/next-app.zip
+  deploy:
+    needs: build-and-deploy-nextjs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name next-js-sample-jh
+        --deployment-config-name CodeDeployDefault.OneAtATime
+        --deployment-group-name github-action-org
+        --s3-location bucket=github-action-org-jh,bundleType=zip,key=next-js-action/next-app.zip
