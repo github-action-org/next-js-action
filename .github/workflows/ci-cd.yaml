@@ -65,22 +65,23 @@ jobs:
 
     steps:
 
-    - name: Deploy to AWS CodeDeploy
-      uses: aws-actions/aws-codedeploy@v2
-      with:
-        application-name: next-js-sample-jh
-        deployment-group-name: github-action-org
-        region: us-west-2
-        wait-until-deployed: true
-        bundle-type: zip
-        file-exists-behavior: overwrite
-        s3-bucket: github-action-org-jh
-        s3-key: /next-js-action/next-app.zip
-    # - name: Code Deploy
-    #   run: aws deploy create-deployment --application-name next-js-sample-jh
-    #     --deployment-config-name CodeDeployDefault.OneAtATime
-    #     --deployment-group-name github-action-org
-    #     --s3-location bucket=github-action-org-jh,bundleType=zip,key=next-js-action/next-app.zip
+    # - name: Deploy to AWS CodeDeploy
+    #   uses: aws-actions/aws-codedeploy@v2
+    #   with:
+    #     application-name: next-js-sample-jh
+    #     deployment-group-name: github-action-org
+    #     region: us-west-2
+    #     wait-until-deployed: true
+    #     bundle-type: zip
+    #     file-exists-behavior: overwrite
+    #     s3-bucket: github-action-org-jh
+    #     s3-key: /next-js-action/next-app.zip
+
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name next-js-sample-jh
+        # --deployment-config-name CodeDeployDefault.OneAtATime
+        --deployment-group-name github-action-org
+        --s3-location bucket=github-action-org-jh,bundleType=zip,key=/next-js-action/next-app.zip
 
 
 
