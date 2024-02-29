@@ -64,21 +64,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-    # - name: Deploy to AWS CodeDeploy
-    #   uses: aws-actions/aws-codedeploy@v2
-    #   with:
-    #     application-name: next-js-sample-jh
-    #     deployment-group-name: github-action-org
-    #     region: us-west-2
-    #     wait-until-deployed: true
-    #     bundle-type: zip
-    #     file-exists-behavior: overwrite
-    #     s3-bucket: github-action-org-jh
-    #     s3-key: /next-js-action/next-app.zip  # 특정 위치를 설정
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
     - name: Code Deploy
       run: |
         aws deploy create-deployment --application-name next-js-sample-jh --deployment-group-name github-action-org --s3-location bucket=github-action-org-jh,bundleType=zip,key=next-js-action/next-app.zip --output json
+
     # - name: Deploy to AWS CodeDeploy
     #   uses: aws-actions/aws-codedeploy@v2
     #   with:
