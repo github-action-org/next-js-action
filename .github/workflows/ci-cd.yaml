@@ -50,8 +50,8 @@ jobs:
     - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
       run: |
         mkdir deploy
-        cp ./appspec-yaml/appspec.yaml ./deploy
-        cp ./appspec-yaml/deploy.sh ./deploy
+        cp ./appspec/appspec.yml ./deploy
+        cp ./appspec/deploy.sh ./deploy
         cp -r .next ./deploy
         zip -r next-app.zip ./deploy
 
