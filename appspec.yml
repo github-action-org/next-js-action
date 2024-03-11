@@ -28,9 +28,9 @@ hooks:
   ApplicationStart:
     - location: script/pm2-restart.sh  # 애플리케이션 시작 시 실행할 스크립트
       timeout: 30
-      owner: ubuntu
-      group: ubuntu
-      runas: ubuntu  
+      owner: root
+      group: root
+      runas: root  
 # version: 0.0
 # os: linux
 # files:
