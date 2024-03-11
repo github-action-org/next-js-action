@@ -46,14 +46,18 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set region ${{ secrets.AWS_REGION }}
 
-
     - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
       run: |
         mkdir deploy
-        cp ./appspec/appspec.yml ./deploy
-        cp ./appspec/deploy.sh ./deploy
-        cp -r .next ./deploy
-        zip -r next-app.zip ./deploy
+        zip -r . ./deploy
+
+    # - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
+    #   run: |
+    #     mkdir deploy
+    #     cp ./appspec/appspec.yml ./deploy
+    #     cp ./appspec/deploy.sh ./deploy
+    #     cp -r .next ./deploy
+    #     zip -r next-app.zip ./deploy
 
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
       run: |        
