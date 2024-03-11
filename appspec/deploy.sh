@@ -1,3 +1,4 @@
 #!/bin/bash
 
-echo "code deploy testing...^^" 
+echo " pm2 restarting"
+pm2 restart testing
