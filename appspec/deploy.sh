@@ -1,3 +1,4 @@
 #!/bin/bash
-echo " pm2 restarting"
-pm2 restart testing
+echo "hi"
+# echo " pm2 restarting"
+# pm2 restart testing
