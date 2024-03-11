@@ -7,21 +7,21 @@ files:
 
 hooks:
   BeforeInstall:
-    - location: deploy.sh  # 배포 전 실행할 스크립트
+    - location: appspec/deploy.sh  # 배포 전 실행할 스크립트
       timeout: 30
       owner: ubuntu
       group: ubuntu
       runas: ubuntu
 
   AfterInstall:
-    - location: deploy.sh  # 배포 후 실행할 스크립트
+    - location: appspec/deploy.sh  # 배포 후 실행할 스크립트
       timeout: 30
       owner: ubuntu
       group: ubuntu
       runas: ubuntu
 
   ApplicationStart:
-    - location: deploy.sh  # 애플리케이션 시작 시 실행할 스크립트
+    - location: appspec/deploy.sh  # 애플리케이션 시작 시 실행할 스크립트
       timeout: 30
       owner: ubuntu
       group: ubuntu
