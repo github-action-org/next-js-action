@@ -61,7 +61,7 @@ jobs:
 
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
       run: |        
-        aws s3 cp deploy.zip s3://github-action-org-jh/next-js-action/next-app.zip 
+        aws s3 cp deploy.zip s3://github-action-org-jh/next-js-action/deploy-app.zip 
 
   deploy:
     needs: build-and-deploy-nextjs
