@@ -18,6 +18,7 @@ hooks:
       group: ubuntu
       runas: ubuntu
 
+
   AfterInstall:
     - location: script/deploy.sh  # 배포 후 실행할 스크립트
       timeout: 30
