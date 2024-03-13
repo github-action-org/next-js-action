@@ -14,10 +14,10 @@ on:
 #   ECR_NAME: my-backend-test
 
 jobs:
-  build-and-deploy-nextjs:
+  Main-Branch-build-deploy-nextjs:
     name: build
-    # environment: main 
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
+    environment: main 
+    if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -35,10 +35,46 @@ jobs:
     - name: Build Next.js app
       run: npm run build
 
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
 
-    # - name: Compress .next Folder
-    #   run: zip -r next-app.zip .next
+    - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
+      run: |
+        mkdir deploy
+        zip -r deploy.zip .
 
+    - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
+      run: |        
+        aws s3 cp deploy.zip s3://github-action-org-jh/next-js-action/main/deploy-app.zip 
+
+    - name: Code Deploy
+      run: |
+        aws deploy create-deployment --application-name next-js-sample-jh --deployment-group-name github-action-org --s3-location bucket=github-action-org-jh,bundleType=zip,key=next-js-action/deploy-app.zip --output json
+
+
+  DEV-Branch-build-deploy-nextjs:
+    name: build
+    environment: dev 
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Next.js app
+      run: npm run build
 
     - name: Configure AWS credentials
       run: |
@@ -51,58 +87,10 @@ jobs:
         mkdir deploy
         zip -r deploy.zip .
 
-    # - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
-    #   run: |
-    #     mkdir deploy
-    #     cp ./appspec/appspec.yml ./deploy
-    #     cp ./appspec/deploy.sh ./deploy
-    #     cp -r .next ./deploy
-    #     zip -r next-app.zip ./deploy
-
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
       run: |        
-        aws s3 cp deploy.zip s3://github-action-org-jh/next-js-action/deploy-app.zip 
+        aws s3 cp deploy.zip s3://github-action-org-jh/next-js-action/dev/deploy-app.zip 
 
-  deploy:
-    needs: build-and-deploy-nextjs
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Configure AWS credentials
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set region ${{ secrets.AWS_REGION }}
     - name: Code Deploy
       run: |
         aws deploy create-deployment --application-name next-js-sample-jh --deployment-group-name github-action-org --s3-location bucket=github-action-org-jh,bundleType=zip,key=next-js-action/deploy-app.zip --output json
-
-    # - name: Deploy to AWS CodeDeploy
-    #   uses: aws-actions/aws-codedeploy@v2
-    #   with:
-    #     application-name: next-js-sample-jh
-    #     deployment-group-name: github-action-org
-    #     region: us-west-2
-    #     wait-until-deployed: true
-    #     bundle-type: zip
-    #     file-exists-behavior: overwrite
-    #     s3-bucket: github-action-org-jh
-    #     s3-key: /next-js-action/next-app.zip
-
-
-
-
-        # --deployment-config-name CodeDeployDefault.OneAtATime
-
-    #  - name: Deploy to AWS CodeDeploy
-    #     uses: aws-actions/aws-codedeploy@v2
-    #     with:
-    #       application-name: Your-CodeDeploy-Application-Name
-    #       deployment-group-name: Your-Deployment-Group-Name
-    #       region: Your-Region
-    #       wait-until-deployed: true
-    #       bundle-type: zip
-    #       file-exists-behavior: overwrite
-    #       s3-bucket: Your-S3-Bucket
-    #       s3-key: app.zip       
-    
