@@ -66,6 +66,7 @@ jobs:
         aws s3 cp deploy.zip s3://$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME 
 
 
+# s3://github-action-org/next-js-action/next-js-action-build.zip
 
   # deploy:
   #   needs: build-and-deploy-nextjs
