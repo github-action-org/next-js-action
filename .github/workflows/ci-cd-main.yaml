@@ -35,16 +35,12 @@ jobs:
 
     - name: Get DEPLOYMENT_GROUP_NAME name
       run: echo $DEPLOYMENT_GROUP_NAME
+
     - name: Cache node modules
-      id: node-cache
       uses: actions/cache@v2
-      env:
-        cache-name: cache-node-modules
       with:
         path: node_modules
-        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-modules-     
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
     - name: Checkout code
       uses: actions/checkout@v2
@@ -55,7 +51,6 @@ jobs:
         node-version: '18'
 
     - name: Install dependencies
-      if: steps.node-cache.outputs.cache-hit != 'true'
       run: npm install
 
     - name: Build Next.js app
@@ -81,7 +76,7 @@ jobs:
 # s3://github-action-org/next-js-action/next-js-action-build.zip
 
   deploy:
-    #needs: build-and-deploy-nextjs
+    needs: build-and-deploy-nextjs
     runs-on: ubuntu-latest
     environment: main
     name: deploy
