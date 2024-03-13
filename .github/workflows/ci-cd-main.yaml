@@ -1,0 +1,73 @@
+name: Build and Deploy Nest.js - frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
+
+# env:
+#   APP_ENV: next-js-action
+#   ECR_NAME: my-backend-test
+
+jobs:
+  build-and-deploy-nextjs:
+    name: build
+    environment: main
+    env:
+      APPLICATION_NAME: ${{ github.repository }} # next-js-action
+      DEPLOYMENT_GROUP_NAME: ${{ github.repository }}-group # next-js-action-group
+      S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}} # github-action-org-jh
+      S3_BUCKET_PATH: ${{ github.repository }}
+      S3_BUCKET_FILE_NAME: ${{ github.repository }}.zip # DEPLOYMENT_GROUP_NAME
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get repository name
+        run: echo "Repository name is ${{ github.repository }}"
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Next.js app
+      run: npm run build
+
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+
+    - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
+      run: |
+        mkdir deploy
+        zip -r deploy.zip .
+
+    - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
+      run: |        
+        aws s3 cp deploy.zip s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME
+
+  deploy:
+    needs: build-and-deploy-nextjs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+    - name: Code Deploy
+      run: |
+        aws deploy create-deployment --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME --output json
