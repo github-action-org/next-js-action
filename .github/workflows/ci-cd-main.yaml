@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: Get repository name
-        run: echo "Repository name is ${{ github.repository }}"
+      run: echo "Repository name is ${{ github.repository }}"
 
     - name: Checkout code
       uses: actions/checkout@v2
