@@ -1,2 +1,3 @@
 #!/bin/bash
-pm2 restart testing
+ sudo systemctl  restart nginx
+ sudo systemctl  status nginx
