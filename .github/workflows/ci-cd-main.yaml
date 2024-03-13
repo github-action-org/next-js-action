@@ -65,7 +65,7 @@ jobs:
     - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
       run: |
         mkdir deploy
-        zip -r deploy.zip .
+        zip -rq deploy.zip .
 
 
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
