@@ -17,8 +17,8 @@ jobs:
     name: build
     environment: main
     env:
-      APPLICATION_NAME: ${{ github.repository }} # next-js-action
-      DEPLOYMENT_GROUP_NAME: ${{ github.repository }}-group # next-js-action-group
+      APPLICATION_NAME: ${{ github.repository }} # github-action-org/next-js-action
+      DEPLOYMENT_GROUP_NAME: ${{ steps.get_repo_name.outputs.repo_name }}-group # next-js-action-group
       S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}} # github-action-org-jh
       S3_BUCKET_PATH: ${{ github.repository }}
       S3_BUCKET_FILE_NAME: ${{ github.repository }}.zip # DEPLOYMENT_GROUP_NAME
@@ -28,6 +28,9 @@ jobs:
     steps:
     - name: Get repository name
       run: echo "Repository name is ${{ github.repository }}"
+
+    - name: Use Repo Name
+      run: echo "Repository Name is ${{ steps.get_repo_name.outputs.repo_name }}"
 
     - name: Checkout code
       uses: actions/checkout@v2
