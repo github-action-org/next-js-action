@@ -17,7 +17,8 @@ jobs:
   Main-Branch-build-deploy-nextjs:
     name: build
     environment: main 
-    if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +59,8 @@ jobs:
   DEV-Branch-build-deploy-nextjs:
     name: build
     environment: dev 
-    if: github.ref == 'refs/heads/dev' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
+    if: github.ref == 'refs/heads/dev'
+    # if: github.ref == 'refs/heads/dev' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
