@@ -68,16 +68,16 @@ jobs:
 
 # s3://github-action-org/next-js-action/next-js-action-build.zip
 
-  # deploy:
-  #   needs: build-and-deploy-nextjs
-  #   runs-on: ubuntu-latest
+  deploy:
+    needs: build-and-deploy-nextjs
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #   - name: Configure AWS credentials
-  #     run: |
-  #       aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #       aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #       aws configure set region ${{ secrets.AWS_REGION }}
-  #   - name: Code Deploy
-  #     run: |
-  #       aws deploy create-deployment --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME --output json
+    steps:
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+    - name: Code Deploy
+      run: |
+        aws deploy create-deployment --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME --output json
