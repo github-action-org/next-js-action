@@ -60,9 +60,12 @@ jobs:
         mkdir deploy
         zip -r deploy.zip .
 
+
     - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
       run: |        
         aws s3 cp deploy.zip s3://$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME 
+
+
 
   # deploy:
   #   needs: build-and-deploy-nextjs
