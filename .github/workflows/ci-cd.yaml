@@ -15,7 +15,7 @@ on:
 
 jobs:
   Main-Branch-build-deploy-nextjs:
-    name: build
+    name: Main-Branch-build-deploy
     environment: main 
     # if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
     if: github.ref == 'refs/heads/main'
@@ -57,7 +57,7 @@ jobs:
 
 
   DEV-Branch-build-deploy-nextjs:
-    name: build
+    name: DEV-Branch-build-deploy
     environment: dev 
     if: github.ref == 'refs/heads/dev'
     # if: github.ref == 'refs/heads/dev' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'push'
