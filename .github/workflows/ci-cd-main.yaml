@@ -18,7 +18,7 @@ jobs:
     environment: main
     env:
       APPLICATION_NAME: ${{ github.repository }} # github-action-org/next-js-action
-      DEPLOYMENT_GROUP_NAME: "::set-output name=repo_name::$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)"-group # next-js-action-group
+      DEPLOYMENT_GROUP_NAME: ${GITHUB_REPOSITORY##*/}-group
       S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}} # github-action-org-jh
       S3_BUCKET_PATH: ${{ github.repository }}
       S3_BUCKET_FILE_NAME: ${{ github.repository }}.zip # DEPLOYMENT_GROUP_NAME
