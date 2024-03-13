@@ -71,6 +71,13 @@ jobs:
   deploy:
     needs: build-and-deploy-nextjs
     runs-on: ubuntu-latest
+    environment: main
+    env:
+      APPLICATION_NAME: ${{ vars.APPLICATION_NAME }} # next-js-action
+      DEPLOYMENT_GROUP_NAME: ${{vars.APPLICATION_NAME}}-group
+      S3_BUCKET_PATH: ${{ github.repository }} # github-action-org/next-js-action
+      S3_BUCKET_FILE_NAME: ${{ vars.APPLICATION_NAME }}-build.zip # DEPLOYMENT_GROUP_NAME
+    if: github.ref == 'refs/heads/main'
 
     steps:
     - name: Configure AWS credentials
