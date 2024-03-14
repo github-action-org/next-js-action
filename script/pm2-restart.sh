@@ -1,3 +1,3 @@
 #!/bin/bash
- sudo systemctl  restart nginx
- sudo systemctl  status nginx
+echo " pm2 restarting"
+pm2 restart next-js-action
