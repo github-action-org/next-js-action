@@ -81,7 +81,7 @@ jobs:
       run: |
         mkdir deploy
         cp ./codedeploy-script/prd/appspec.yml .
-        tar czf bin.tar.gz --dereference node_modules/.bin
+        tar czf bin.tar.gz --dereference ./node_modules/.bin
         zip -rq deploy.zip .
 
 

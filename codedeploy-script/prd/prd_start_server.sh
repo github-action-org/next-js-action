@@ -39,4 +39,5 @@ else
 fi
 
 echo "start application service .... "
-pm2 start --name "$service_name" yarn -- start:prd
+#pm2 start --name "$service_name" yarn -- start:prd
+ pm2 start --interpreter bash --no-autorestart --name "$service_name" -c "yarn start:prd"
