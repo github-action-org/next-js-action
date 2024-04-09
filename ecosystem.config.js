@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-      name: 'my-vue-app', // PM2에서 사용할 앱의 이름
+      name: 'next-js-action', // PM2에서 사용할 앱의 이름
       script: 'yarn', // yarn 명령어를 실행합니다.
       args: 'start:prd', // start:prd 스크립트를 실행합니다.
       interpreter: 'none', // 인터프리터를 사용하지 않습니다.
@@ -14,4 +14,4 @@ module.exports = {
         NODE_ENV: 'production' // 프로덕션 환경 설정
       }
     }]
-  };
+};
