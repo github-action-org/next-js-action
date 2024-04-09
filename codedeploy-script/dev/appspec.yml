@@ -1,0 +1,29 @@
+version: 0.0
+os: linux
+files:
+  - source: . # 해당경로 전체 복사
+    destination: /data/app/lugstay-api/
+file_exists_behavior: OVERWRITE
+
+
+permissions:
+  - object: /data/app/lugstay-api/
+    owner: root
+    group: root
+
+hooks:
+  BeforeInstall:  ## 최초 한번만 실행
+    - location: codedeploy-script/common/init_setting.sh
+      timeout: 300
+      runas: root
+    - location: codedeploy-script/common/install_dependencies.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: codedeploy-script/dev/dev_start_server.sh
+      timeout: 300
+      runas: root
+  ValidateService:
+    - location: codedeploy-script/dev/dev_validate_server.sh
+      timeout: 300
+      runas: root

@@ -1,0 +1,130 @@
+name: Build and Deploy lugstay-api - brach dev
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build:
+    name: build
+    # environment: dev
+    env:
+      BRANCH_NAME: ${{ github.ref }}
+      APPLICATION_NAME: ${{ vars.APPLICATION_NAME }} # lugstay-api
+      DEPLOYMENT_GROUP_NAME: ${{vars.APPLICATION_NAME}}-dev-group # lugstay-api-dev-group
+      S3_BUCKET_NAME:  ${{ secrets.S3_BUCKET_NAME }} # swc-code-deploy-s3
+      S3_BUCKET_PATH: ${{ github.repository }} # bwc-developer/lugstay-api
+      S3_BUCKET_FILE_NAME: ${{ vars.APPLICATION_NAME }}-dev-build.zip # lugstay-api-build.zip
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      
+    - name: Get repository name
+      run: echo "Repository name is ${{ github.repository }}"
+
+    - name: Get branch information
+      run: |
+        echo "The current branch is ${{ github.ref }}"
+
+    - name: Get DEPLOYMENT_GROUP_NAME name
+      run: echo $DEPLOYMENT_GROUP_NAME
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Cache Yarn packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Cache Node.js packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install Yarn
+      run: |
+        curl -o- -L https://yarnpkg.com/install.sh | bash
+        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+    - name: Install dependencies
+      run: yarn install
+
+
+    - name: Build 
+      run: yarn build:dev
+
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+
+    - name: Make zip file # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive
+      run: |
+        mkdir deploy
+        cp ./codedeploy-script/dev/appspec.yml .
+        zip -rq deploy.zip .
+
+
+    - name: Upload to S3 # aws s3 cp .next s3://github-action-org-jh/next-js-action/.next --recursive  ./next 복사
+      run: |        
+        aws s3 cp deploy.zip s3://$S3_BUCKET_NAME/$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME 
+        
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # environment: dev
+    name: deploy
+    env:
+      BRANCH_NAME: ${{ github.ref }}
+      APPLICATION_NAME: ${{ vars.APPLICATION_NAME }} # lugstay-api
+      DEPLOYMENT_GROUP_NAME: ${{vars.APPLICATION_NAME}}-dev-group # lugstay-api-dev-group
+      S3_BUCKET_NAME:  ${{ secrets.S3_BUCKET_NAME }} # swc-code-deploy-s3
+      S3_BUCKET_PATH: ${{ github.repository }} # bwc-developer/lugstay-api
+      S3_BUCKET_FILE_NAME: ${{ vars.APPLICATION_NAME }}-dev-build.zip # lugstay-api-build.zip
+    if: github.ref == 'refs/heads/dev'
+
+    steps:
+    - name: Configure AWS credentials
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ${{ secrets.AWS_REGION }}
+    - name: Code Deploy
+      run: |
+        aws deploy create-deployment --application-name $APPLICATION_NAME --deployment-group-name $DEPLOYMENT_GROUP_NAME \
+         --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$S3_BUCKET_PATH/$S3_BUCKET_FILE_NAME --output json
+
+  notify:
+      needs: [build, deploy]
+      runs-on: ubuntu-latest
+      if: ${{ failure() }}
+      
+      steps:
+      - name: Send Slack notification on failure
+        if: ${{ failure() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{
+            "text": "GitHub Action failed on branch: $GITHUB_REF"
+          }' $SLACK_WEBHOOK_URL

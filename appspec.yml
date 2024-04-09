@@ -1,0 +1,57 @@
+version: 0.0
+os: linux
+files:
+  - source: .  # 빌드된 애플리케이션 파일들이 있는 디렉터리
+    destination: /home/ubuntu/app/  # 배포할 디렉터리
+file_exists_behavior: OVERWRITE
+
+permissions:
+  - object: /home/ubuntu/app/
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  BeforeInstall:
+    - location: script/nginx-status.sh  # 배포 전 실행할 스크립트
+      timeout: 30
+      owner: ubuntu
+      group: ubuntu
+      runas: ubuntu
+
+
+  AfterInstall:
+    - location: script/nginx-restart.sh  # 배포 후 실행할 스크립트
+      timeout: 30
+      owner: ubuntu
+      group: ubuntu
+      runas: ubuntu
+
+  ApplicationStart:
+    - location: script/pm2-restart.sh  # 애플리케이션 시작 시 실행할 스크립트
+      timeout: 30
+      owner: ubuntu
+      group: ubuntu
+      runas: ubuntu  
+      
+# version: 0.0
+# os: linux
+# files:
+#   - source: deploy-app.zip
+#     destination: /home/ubuntu/app/ 
+# # hooks:
+# #   ApplicationStop:
+# #     - location: scripts/stop.sh
+# #       timeout: 300
+# #       runas: ubuntu
+# #   BeforeInstall:
+# #     - location: scripts/before_install.sh
+# #       timeout: 300
+# #       runas: ubuntu
+# #   AfterInstall:
+# #     - location: scripts/after_install.sh
+# #       timeout: 300
+# #       runas: ubuntu
+# #   ApplicationStart:
+# #     - location: scripts/start.sh
+# #       timeout: 300
+# #       runas: ubuntu
