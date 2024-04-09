@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folder="/data/app/lugstay-api"
+folder="/data/app/next-js-action"
 
 if [ ! -d "$folder" ]; then
     mkdir -p "$folder"
