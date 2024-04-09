@@ -17,19 +17,19 @@ nvm --version
 # install the application using npm
 # we need to traverse to where the application bundle is copied too.
 echo installing application with npm
-cd /data/app/lugstay-api/
+cd /data/app/next-js-action/
 
-sudo rm -rf /data/app/lugstay-api/node_modules 
-sudo rm -rf /data/app/lugstay-api/dist
-echo "yarn install"
-yarn install
-echo "yarn build:prd"
-yarn build:prd
+# sudo rm -rf /data/app/lugstay-api/node_modules 
+# sudo rm -rf /data/app/lugstay-api/dist
+# echo "yarn install"
+# yarn install
+# echo "yarn build:prd"
+# yarn build:prd
 
 echo "chekcing application service .... "
 echo "**********************************"
 echo "********** Env setting ***********"
-service_name="lugstay-api"
+service_name="next-js-action"
 echo "**********************************"
 echo "********** Env setting ***********"
 if pm2 list | grep -q "$service_name"; then
