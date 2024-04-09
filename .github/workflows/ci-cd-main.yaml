@@ -19,7 +19,8 @@ jobs:
       S3_BUCKET_NAME:  ${{ secrets.S3_BUCKET_NAME }} # swc-code-deploy-s3
       S3_BUCKET_PATH: ${{ github.repository }} # bwc-developer/lugstay-api
       S3_BUCKET_FILE_NAME: ${{ vars.APPLICATION_NAME }}-prd-build.zip # lugstay-api-build.zip
-    if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    #if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
