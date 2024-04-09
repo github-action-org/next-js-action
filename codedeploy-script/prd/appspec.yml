@@ -2,12 +2,12 @@ version: 0.0
 os: linux
 files:
   - source: . # 해당경로 전체 복사
-    destination: /data/app/lugstay-api/
+    destination: /data/app/next-js-action/
 file_exists_behavior: OVERWRITE
 
 
 permissions:
-  - object: /data/app/lugstay-api/
+  - object: /data/app/next-js-action/
     owner: root
     group: root
 
